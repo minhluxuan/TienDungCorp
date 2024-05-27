@@ -58,6 +58,7 @@ const upload = async (req, res) => {
         }
 
         if (response.status < 200 || response.status > 299) {
+            fs.unlinkSync(filePath);
             return res.status(response.status).json(new Response(false, response.data.message));
         }
 
@@ -74,6 +75,8 @@ const upload = async (req, res) => {
         if (!resultSavingPost || resultSavingPost.affectedRows === 0) {
             throw new Error("Error saving post");
         }
+
+        fs.unlinkSync(filePath);
 
         return res.status(HttpStatus.CREATED).json(new Response(true, "Đăng bài viết thành công", data));
     } catch (error) {
