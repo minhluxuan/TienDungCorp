@@ -39,18 +39,26 @@ const upload = async (req, res) => {
         form.append('title', req.body.title || req.query.title);
         form.append('author', req.body.author || req.query.author);
 
+        let response;
         try {
-            await axios.post(
+            response = await axios.post(
                 "http://localhost:3001/v1/files/upload?path=general_website/media&option=default",
                 form,
                 {
                     headers: {
                         ...form.getHeaders(),
                     },
+                    validateStatus: function (status) {
+                        return status >= 200 && status <= 500;
+                    }
                 }
             );
         } catch (error) {
-            return res.status(HttpStatus.CONFLICT).json(new Response(false, "Đăng bài thất bại"));
+            return res.status(HttpStatus.CONFLICT).json(new Response(false, error));
+        }
+
+        if (response.status < 200 || response.status > 299) {
+            return res.status(response.status).json(new Response(false, response.data.message));
         }
 
         const data = new Object({
@@ -103,7 +111,7 @@ const getFile = async (req, res) => {
 
         let response;
         try {
-            response = await axios.get(`http://localhost:3001/v1/files/get?path=general_website/media/${resultGettingPost[0].file}&option=default`, {
+            response = await axios.get(`http://localhost:3001/v1/files?path=general_website/media/${resultGettingPost[0].file}&option=default`, {
                 responseType: 'stream'
             });
         } catch (error) {
