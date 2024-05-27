@@ -32,7 +32,7 @@ export async function uploadPost(postPayload: UploadingPostPayload) {
         formData.append('author', postPayload.author);
         formData.append('file', postPayload.file);
 
-        const response: AxiosResponse = await axios.post("http://localhost:3000/v1/files/upload", formData);
+        const response: AxiosResponse = await axios.post("http://localhost:3000/v1/media/upload", formData);
 
         return { error: response.data.error, message: response.data.message, data: response.data.data };
     } catch (error: any) {
@@ -45,7 +45,7 @@ export async function uploadPost(postPayload: UploadingPostPayload) {
 // Response will be zipped file
 export async function getFile(criteria: GettingFileCriteria) {
     try {
-        const response: AxiosResponse = await axios.get(`http://localhost:3000/v1/files/file?id=${criteria.id}`, {
+        const response: AxiosResponse = await axios.get(`http://localhost:3000/v1/media/file?id=${criteria.id}`, {
             responseType: 'arraybuffer',
         });
 
@@ -71,7 +71,7 @@ export async function getFile(criteria: GettingFileCriteria) {
 
 export async function getPosts(criteria: GettingPostCriteria) {
     try {
-        const response: AxiosResponse = await axios.post("http://localhost:3000/v1/files/post", criteria);
+        const response: AxiosResponse = await axios.post("http://localhost:3000/v1/media/post", criteria);
         return { error: response.data.error, message: response.data.message, data: response.data.data };
     } catch (error: any) {
         console.error('Error getting posts:', error?.response?.data);
