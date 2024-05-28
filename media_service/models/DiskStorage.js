@@ -8,7 +8,32 @@ class DiskStorage extends Storage {
     #_tempFilePath;
     #_filePath;
     static acceptedTypes = [
-        'application/zip', 
+            'image/jpeg',
+            'image/png',
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'image/gif',
+            'application/zip', 
+            'application/x-tar',
+            'application/x-rar-compressed', 
+            'application/gzip',
+            'video/mp4',
+            'audio/mpeg',
+            'audio/wav', 
+            'audio/ogg', 
+            'audio/aac',
+            'video/webm',
+            'model/gltf-binary',
+            'application/vnd.ms-excel',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 
+            'application/json',
+            'application/xml',
+            'application/vnd.ms-powerpoint',
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+            'text/plain',
+            'text/html',
+            'image/webp'
     ];
 
     constructor(fieldName, maxFileSize, maxFileNameLength, tempFilePath, filePath) {
