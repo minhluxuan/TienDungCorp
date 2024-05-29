@@ -19,8 +19,9 @@ const validateGettingPost = (data) => {
         id: Joi.string(),
         author: Joi.string(),
         title: Joi.string(),
-        monthCreated: Joi.number().min(1).max(12),
-        yearCreated: Joi.number().min(2024),
+        yearEnd: Joi.number().min(2024),
+        yearStart: Joi.number().min(2024),
+        
     }).strict().validate(data);
 }
 

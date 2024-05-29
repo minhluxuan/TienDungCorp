@@ -43,13 +43,13 @@ const find = async (criteria) => {
     }
 
     // Check if monthCreated and yearCreated are provided
-    if (criteria.monthCreated && criteria.yearCreated) {
-        const monthCreated = criteria.monthCreated;
-        const yearCreated = criteria.yearCreated;
+    if (criteria.yearStart && criteria.yearEnd) {
+        const yearStart = criteria.yearStart;
+        const yearEnd = criteria.yearEnd;
 
         // Remove monthCreated and yearCreated from criteria
-        delete criteria.monthCreated;
-        delete criteria.yearCreated;
+        delete criteria.yearStart;
+        delete criteria.yearEnd;
 
         fields = Object.keys(criteria);
         values = Object.values(criteria);
@@ -64,8 +64,8 @@ const find = async (criteria) => {
         }
 
         // Calculate date range for the specified month and year
-        const startDate = new Date(yearCreated, monthCreated - 1, 1);
-        const endDate = new Date(yearCreated, monthCreated, 1);
+        const startDate = new Date(yearStart, 1, 1);
+        const endDate = new Date(yearEnd, 12, 31);
 
         values.push(startDate.toISOString());
         values.push(endDate.toISOString());
