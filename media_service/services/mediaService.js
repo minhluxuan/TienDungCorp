@@ -12,8 +12,13 @@ const getPosts = async (criteria) => {
     return await mediaRepository.find(criteria);
 }
 
+const getAllPosts = async () => {
+    return await mediaRepository.findAll();
+};
+
 module.exports = {
     savePost,
     getPostById,
     getPosts,
+    getAllPosts
 }

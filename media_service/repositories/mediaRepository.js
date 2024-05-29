@@ -78,9 +78,24 @@ const find = async (criteria) => {
     return (await pool.query(query, values))[0];
 };
 
+const findAll = async () => {
+    let query;
+
+    query = `SELECT * FROM media`;
+
+    try {
+        const result = await pool.query(query, values);
+        console.log(result);
+        return result[0];
+    } catch (error) {
+        console.log("Error: ", error);
+        throw new Error("Đã xảy ra lỗi. Vui lòng thử lại sau ít phút!");
+    }
+}
 
 module.exports = {
     insert,
     findById,
     find,
+    findAll
 }
