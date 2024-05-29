@@ -47,22 +47,15 @@ export async function uploadPost(postPayload: UploadingPostPayload) {
 export async function getFile(criteria: GettingFileCriteria) {
     try {
         const response: AxiosResponse = await axios.get(`http://localhost:3000/v1/media/file?id=${criteria.id}`, {
+            withCredentials: true,
             responseType: 'arraybuffer',
         });
 
-        const zipFile = await JSZip.loadAsync(response.data);
-        const imageUrls: string[] = [];
+        const blob = new Blob([response.data], { type: response.headers['content-type'] });
+        const imgUrl = URL.createObjectURL(blob);
 
-        await Promise.all(
-            Object.keys(zipFile.files).map(async (filename) => {
-                const file = zipFile.files[filename];
-                const blob = await file.async('blob');
-                const url = URL.createObjectURL(blob);
-                imageUrls.push(url);
-            })
-        );
+        return { data: imgUrl}
 
-        return imageUrls;
     } catch (error: any) {
         console.error('Error getting file:', error?.response?.data);
         console.error("Request that caused the error: ", error?.request);

@@ -92,11 +92,6 @@ const getPosts = async (req, res) => {
         if (error) {
             return res.status(HttpStatus.BAD_REQUEST).json(new Response(false, "Thông tin không hợp lệ"));
         }
-        if (!req.body)
-        {
-            const resultGettingPosts = await mediaService.getAllPosts(); 
-            return res.status(HttpStatus.OK).json(new Response(true, "Lấy dữ liệu thành công", resultGettingPosts));
-        }
         const resultGettingPosts = await mediaService.getPosts(req.body); 
         return res.status(HttpStatus.OK).json(new Response(true, "Lấy dữ liệu thành công", resultGettingPosts));
     } catch (error) {
