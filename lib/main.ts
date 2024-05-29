@@ -5,6 +5,7 @@ import * as JSZip from 'jszip';
 export interface UploadingPostPayload {
     title: String,
     author: String,
+    type: Number,
     file: File
 }
 
