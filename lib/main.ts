@@ -17,8 +17,8 @@ export interface GettingPostCriteria {
     id: String,
     author: String,
     title: String,
-    monthCreated: Number,
-    yearCreated: Number,
+    yearEnd: Number,
+    yearStart: Number,
 }
 
 export interface GettingFileCriteria {
