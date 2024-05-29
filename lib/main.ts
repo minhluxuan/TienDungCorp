@@ -70,9 +70,9 @@ export async function getFile(criteria: GettingFileCriteria) {
     }
 }
 
-export async function getPosts(criteria: GettingPostCriteria) {
+export async function getPosts(criteria?: GettingPostCriteria) {
     try {
-        const response: AxiosResponse = await axios.post("http://localhost:3000/v1/media/post", criteria);
+        const response: AxiosResponse = await axios.post("http://localhost:3000/v1/media/post", criteria || {});
         return { error: response.data.error, message: response.data.message, data: response.data.data };
     } catch (error: any) {
         console.error('Error getting posts:', error?.response?.data);
