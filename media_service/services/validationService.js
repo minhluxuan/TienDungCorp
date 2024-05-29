@@ -4,6 +4,7 @@ const validateUploadingContent = (data) => {
     return Joi.object({
         title: Joi.string(),
         author: Joi.string(),
+        type: Joi.number()
     }).strict().validate(data);
 }
 

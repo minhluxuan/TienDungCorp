@@ -27,7 +27,7 @@ const upload = async (req, res) => {
             fs.mkdirSync(uploadDir, { recursive: true });
         }
         const filePath = path.join(uploadDir, req.file.filename);
-
+        
         if (!fs.existsSync(filePath) || fs.lstatSync(filePath).isDirectory()) {
             return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(new Response(false, "Đã xảy ra lỗi. Vui lòng thử lại."));
         }
@@ -69,6 +69,7 @@ const upload = async (req, res) => {
             date_created: formattedDate,
             date_modified: formattedDate,
             file: req.file.originalname,
+            type: req.body.type
         });
 
         const resultSavingPost = await mediaService.savePost(data);
