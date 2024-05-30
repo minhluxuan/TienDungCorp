@@ -12,6 +12,7 @@ router.post("/upload",auth.isAuthenticated(), diskStorage.upload.single(diskStor
 router.get("/file", mediaController.getFile);
 router.post("/post", mediaController.getPosts);
 router.post("/uploadImg", diskStorage.upload.single(diskStorage.fieldName), mediaController.uploadVideoImage)
+router.get("/getImg", mediaController.getVideoImage);
 
 module.exports = router;
 

@@ -201,9 +201,42 @@ const uploadVideoImage = async (req, res) =>{
     }
 };
 
+const getVideoImage = async (req, res) => {
+    try {
+        const { error } = validationService.validateGettingImage(req.query);
+        if (error) {
+            return res.status(HttpStatus.BAD_REQUEST).json(new Response(false, "Thông tin không hợp lệ"));
+        }
+
+        let response;
+        try {
+            response = await axios.get(`http://localhost:3001/v1/files?path=general_website/media/${req.query.path}&option=default`, {
+                responseType: 'stream'
+            });
+        } catch (error) {
+            console.log(error);
+            if (error.response.status == 404) {
+                return res.status(HttpStatus.NOT_FOUND).json(new Response(false, "File không tồn tại"));
+            }
+            else {
+                return res.status(error.response.status).json(new Response(false, "Đã xảy ra lỗi. Vui lòng thử lại"));
+            }
+        }
+
+        // res.setHeader('Content-Disposition', `attachment; filename="${resultGettingPost[0].file}"`);
+        res.setHeader('Content-Type', response.headers['content-type']);
+
+        response.data.pipe(res);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: "An error occurred while fetching the file" });
+    }
+};
+
 module.exports = {
     upload,
     getFile,
     getPosts,
-    uploadVideoImage
+    uploadVideoImage,
+    getVideoImage
 }

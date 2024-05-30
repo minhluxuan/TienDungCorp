@@ -14,6 +14,12 @@ const validateGettingFile = (data) => {
     }).strict().validate(data);  
 }
 
+const validateGettingImage = (data) => {
+    return Joi.object({
+        path: Joi.string().required(),
+    }).strict().validate(data);  
+}
+
 const validateGettingPost = (data) => {
     return Joi.object({
         id: Joi.string(),
@@ -29,4 +35,5 @@ module.exports = {
     validateUploadingContent,
     validateGettingFile,
     validateGettingPost,
+    validateGettingImage
 }
