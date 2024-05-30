@@ -9,6 +9,7 @@ const FormData = require("form-data");
 const { v4: uuidv4 } = require("uuid");
 const moment = require("moment");
 
+
 const upload = async (req, res) => {
     try {
         const formattedDate = moment().format("YYYY-MM-DD");
@@ -137,8 +138,72 @@ const getFile = async (req, res) => {
     }
 };
 
+const uploadVideoImage = async (req, res) =>{
+    try {
+
+        if (!req.file) {
+            return res.status(HttpStatus.NOT_FOUND).json(new Response(false, "File không được để trống"));
+        }
+
+        if (req.file.mimetype !== "image/jpg" && req.file.mimetype !== "image/jpeg" && req.file.mimetype !== "image/png" && req.file.mimetype !== "image/webp") { 
+            return res.status(HttpStatus.FORBIDDEN).json(new Response(false, "File không được cho phép"));         
+        }
+
+        const uploadDir = path.join(__dirname, '..', 'uploads', 'temp');
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+        }
+        const filePath = path.join(uploadDir, req.file.filename);
+        
+        if (!fs.existsSync(filePath) || fs.lstatSync(filePath).isDirectory()) {
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(new Response(false, "Đã xảy ra lỗi. Vui lòng thử lại."));
+        }
+
+        const fileStream = fs.createReadStream(filePath);
+        const form = new FormData();
+        form.append("file", fileStream, req.file.originalname);
+
+        let response;
+        try {
+            response = await axios.post(
+                "http://localhost:3001/v1/files/upload?path=general_website/media/img_video&option=default",
+                form,
+                {
+                    headers: {
+                        ...form.getHeaders(),
+                    },
+                    validateStatus: function (status) {
+                        return status >= 200 && status <= 500;
+                    }
+                }
+            );
+        } catch (error) {
+            return res.status(HttpStatus.CONFLICT).json(new Response(false, error));
+        }
+
+        if (response.status < 200 || response.status > 299) {
+            fs.unlinkSync(filePath);
+            return res.status(response.status).json(new Response(false, response.data.message));
+        }
+
+        const pathname = path.join(__dirname, "..", "..", "file_server", "uploads", "main", "general_website", "media", "img_video");
+        // console.log(pathname);
+        const data = new Object({
+            pathName: path.join(pathname, req.file.originalname)
+        });
+
+        fs.unlinkSync(filePath);
+
+        return res.status(HttpStatus.CREATED).json(new Response(true, "Lưu hình ảnh thành công", data));
+    } catch (error) {
+        console.error('Error uploading file:', error);
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(new Response(false, "Đã xảy ra lỗi. Vui lòng thử lại."));
+    }
+};
+
 module.exports = {
     upload,
     getFile,
     getPosts,
+    uploadVideoImage
 }

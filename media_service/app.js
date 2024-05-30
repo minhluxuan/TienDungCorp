@@ -7,6 +7,12 @@ const cors = require('cors');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var mediaRouter = require("./routes/mediaRoute");
+var staffRouter = require("./routes/staffRoute");
+const auth = require("./lib/auth");
+const session = require("express-session");
+const passport = require("passport");
+const dotenv = require("dotenv");
+dotenv.config();
 
 var app = express();
 
@@ -23,13 +29,49 @@ app.use(cors({
   origin: ["http://localhost:3002"],
   credentials: true
 }))
+
+const sessionMiddleware = session({
+	secret: process.env.SESSION_SECRET,
+	resave: false,
+	saveUninitialized: false,
+	cookie: {
+      // secure: false,
+      // sameSite: 'None',
+      httpOnly: true,
+      maxAge: 12 * 60 * 60 * 1000,
+  	},
+});
+
+app.use(sessionMiddleware);
+app.use(passport.initialize());
+app.use(passport.session());
+
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use("/v1/media", mediaRouter);
+app.use('/v1/staff', staffRouter);
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+app.get("/get_session", (req, res) => {
+  console.log(req.user);
+  res.status(200).json({
+      error: false,
+      message: "Lấy phiên đăng nhập thành công.",
+  });
+});
+app.get("/destroy_session", (req, res) => {
+  req.logout(() => {
+      req.session.destroy();
+  });
+  return res.status(200).json({
+      error: false,
+      message: "Hủy phiên hoạt động thành công.",
+  });
+});
+
+passport.serializeUser(auth.setSession);
+passport.deserializeUser((user, done) => {
+    auth.verifyPermission(user, done);
 });
 
 // error handler
@@ -42,5 +84,6 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
 
 module.exports = app;

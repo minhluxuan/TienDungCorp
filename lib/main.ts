@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from "axios";
+import { error } from "console";
 const FormData = require("form-data");
 import * as JSZip from 'jszip';
 
@@ -24,6 +25,28 @@ export interface GettingPostCriteria {
 export interface GettingFileCriteria {
     id: String,
 }
+
+export interface uploadImg {
+    file: File
+}
+
+export async function login(username: string, password: string) {
+    try {
+        const response: AxiosResponse = await axios.post("http://localhost:3000/v1/staff/login", {
+            username: username,
+            password: password,
+        }, {
+            withCredentials: true,
+        });
+
+        return { error: response.data.error, message: response.data.message, valid: response.data.valid };
+    } catch (error: any) {
+        console.error('Error uploading post:', error?.response?.data);
+        console.error("Request that caused the error: ", error?.request);
+        return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null }; // Ném lỗi để xử lý bên ngoài
+    }
+}
+
 
 // File must be archived first (.zip type), it's not allowed to receive other file types 
 export async function uploadPost(postPayload: UploadingPostPayload) {
@@ -74,6 +97,21 @@ export async function getPosts(criteria?: GettingPostCriteria) {
     }
 }
 
+export async function uploadImg(postPayload: uploadImg) {
+    try {
+        const formData = new FormData();
+
+        formData.append('file', postPayload.file);
+
+        const response: AxiosResponse = await axios.post("http://localhost:3000/v1/media/uploadImg", formData);
+
+        return { error: response.data.error, message: response.data.message, data: response.data.data };
+    } catch (error: any) {
+        console.error('Error uploading post:', error?.response?.data);
+        console.error("Request that caused the error: ", error?.request);
+        return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null }; // Ném lỗi để xử lý bên ngoài
+    }
+}
 
 
 
