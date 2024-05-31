@@ -6,7 +6,7 @@ var logger = require('morgan');
 const cors = require('cors');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var mediaRouter = require("./routes/mediaRoute");
+var projectRouter = require("./routes/projectRoute");
 var staffRouter = require("./routes/staffRoute");
 const auth = require("./lib/auth");
 const session = require("express-session");
@@ -46,10 +46,9 @@ app.use(sessionMiddleware);
 app.use(passport.initialize());
 app.use(passport.session());
 
-
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use("/v1/media", mediaRouter);
+app.use("/v1/media", projectRouter);
 app.use('/v1/staff', staffRouter);
 
 app.get("/get_session", (req, res) => {

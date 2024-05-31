@@ -12,8 +12,8 @@ const dbOptions = {
     host: "localhost",
     port: 3306,
     user: "root",
-    password: "nhan.nguyen1606",
-    database: "localtdlogistics",
+    password: "",
+    database: "tiendungcorp",
 };
 
 const pool = mysql.createPool(dbOptions).promise();
@@ -22,13 +22,18 @@ const insert = async (data) => {
     const fields = Object.keys(data);
     const values = Object.values(data);
 
-    const query = `INSERT INTO media (${fields.map(field => `${field}`)}) VALUES (${fields.map(field => `?`)})`;
+    const query = `INSERT INTO project (${fields.map(field => `${field}`)}) VALUES (${fields.map(field => `?`)})`;
     const result = await pool.query(query, values);
     return result[0];
 }
 
+const existById = async (id) => {
+    const query = "SELECT * FROM project WHERE id = ?";
+    return (await pool.query(query, id))[0].length > 0;
+}
+
 const findById = async (id) => {
-    const query = "SELECT * FROM media WHERE id = ?";
+    const query = "SELECT * FROM project WHERE id = ?";
     return (await pool.query(query, id))[0];
 }
 
@@ -38,7 +43,7 @@ const find = async (criteria) => {
 
     // Check if there are no fields or values
     if (!fields || !values || fields.length === 0 || values.length === 0) {
-        const query = "SELECT * FROM media";
+        const query = "SELECT * FROM project";
         return (await pool.query(query))[0];
     }
 
@@ -55,7 +60,7 @@ const find = async (criteria) => {
         values = Object.values(criteria);
 
         // Build the query for other criteria
-        let query = `SELECT * FROM media`;
+        let query = `SELECT * FROM project`;
         if (fields.length > 0) {
             query += ` WHERE ${fields.map(field => `${field} = ?`).join(" AND ")}`;
             query += " AND date_created >= ? AND date_created < ?";
@@ -74,14 +79,23 @@ const find = async (criteria) => {
     }
 
     // Build the query for criteria without date conditions
-    const query = `SELECT * FROM media WHERE ${fields.map(field => `${field} = ?`).join(" AND ")}`;
+    const query = `SELECT * FROM project WHERE ${fields.map(field => `${field} = ?`).join(" AND ")}`;
     return (await pool.query(query, values))[0];
 };
 
+const deleteById = async (id) => {
+    if (!id) {
+        return null;
+    }
 
+    const query = "DELETE FROM project WHERE id = ?";
+    return (await pool.query(query, id))[0];
+}
 
 module.exports = {
     insert,
     findById,
-    find
+    find,
+    existById,
+    deleteById,
 }

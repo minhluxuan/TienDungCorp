@@ -58,6 +58,19 @@ const get = async (req, res) => {
     }
 }
 
+const checkExistPath = async (req, res) => {
+    try {
+        if (fs.existsSync(path.join(__dirname, "..", "uploads", "main", req.query.path))) {
+            return res.status(HttpStatus.OK).json(new Response(true, "Đường dẫn đã tồn tại", {existed: true}));
+        }
+
+        return res.status(HttpStatus.OK).json(new Response(true, "Đường dẫn chưa tồn tại", {existed: false}));
+    } catch (error) {
+        console.log(error);
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(new Response(false, "Đã xảy ra lỗi. Vui lòng thử lại"));
+    }
+}
+
 const upload = async (req, res) => {
     try {
         const { error } = validationService.validateUploadingFile(req.query);
@@ -194,8 +207,25 @@ const remove = async (req, res) => {
     }
 };
 
+const createDirectory = (req, res) => {
+    try {
+        const dirPath = path.join(__dirname, "..", "uploads", "main", req.query.path);
+        if (fs.existsSync(dirPath)) {
+            return res.status(HttpStatus.CONFLICT).json(new Response(false, "Thư mục đã tồn tại"));
+        }
+        
+        fileService.createDirectoriesFromMain(req.query.path);
+        return res.status(HttpStatus.CREATED).json(new Response(true, "Tạo thư mục thành công"));
+    } catch (error) {
+        console.log(error.message);
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(new Response(false, "Tạo thư mục thất bại"));
+    }
+}
+
 module.exports = {
     get,
+    checkExistPath,
     upload,
     remove,
+    createDirectory,
 }
