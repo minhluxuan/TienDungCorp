@@ -12,6 +12,7 @@ const auth = require("./lib/auth");
 const session = require("express-session");
 const passport = require("passport");
 const dotenv = require("dotenv");
+
 dotenv.config();
 
 var app = express();
@@ -26,20 +27,20 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors({
-  origin: ["http://localhost:3002"],
+  origin: ["http://localhost:3002", "http://127.0.0.1:5500"],
   credentials: true
 }))
 
 const sessionMiddleware = session({
-	secret: process.env.SESSION_SECRET,
-	resave: false,
-	saveUninitialized: false,
-	cookie: {
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
       // secure: false,
       // sameSite: 'None',
       httpOnly: true,
       maxAge: 12 * 60 * 60 * 1000,
-  	},
+  },
 });
 
 app.use(sessionMiddleware);
@@ -52,12 +53,13 @@ app.use("/v1/media", projectRouter);
 app.use('/v1/staff', staffRouter);
 
 app.get("/get_session", (req, res) => {
-  console.log(req.user);
+  console.log(req.session);
   res.status(200).json({
       error: false,
       message: "Lấy phiên đăng nhập thành công.",
   });
 });
+
 app.get("/destroy_session", (req, res) => {
   req.logout(() => {
       req.session.destroy();

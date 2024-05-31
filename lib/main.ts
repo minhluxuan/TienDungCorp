@@ -37,7 +37,7 @@ export interface GettingFileImg {
 
 export async function login(username: string, password: string) {
     try {
-        const response: AxiosResponse = await axios.post("http://localhost:3000/v1/staff/login", {
+        const response: AxiosResponse = await axios.post("http://localhost:3000/v1/media/login", {
             username: username,
             password: password,
         }, {
