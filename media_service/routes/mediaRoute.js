@@ -13,7 +13,8 @@ const sessionStrategy = new LocalStrategy({
     if (username !== process.env.ACCOUNT || password !== process.env.PASSWORD) {
       return done(null, false);
     }
-    return done(null, { username }); // Trả về thông tin người dùng nếu thành công
+    console.log(username);
+    return done(null, true); // Trả về thông tin người dùng nếu thành công
   } catch (error) {
     done(error);
   }
