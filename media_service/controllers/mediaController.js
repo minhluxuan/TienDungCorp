@@ -35,10 +35,7 @@ const upload = async (req, res) => {
 
         const fileStream = fs.createReadStream(filePath);
         const form = new FormData();
-        form.append("file", fileStream, req.file.originalname);
-
-        form.append('title', req.body.title || req.query.title);
-        form.append('author', req.body.author || req.query.author);
+        form.append("file", fileStream, req.file.filename);
 
         let response;
         try {
@@ -69,7 +66,7 @@ const upload = async (req, res) => {
             title: req.body.title,
             date_created: formattedDate,
             date_modified: formattedDate,
-            file: req.file.originalname,
+            file: req.file.filename,
             type: req.body.type
         });
 

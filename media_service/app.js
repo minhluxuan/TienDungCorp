@@ -12,13 +12,27 @@ const auth = require("./lib/auth");
 const session = require("express-session");
 const passport = require("passport");
 const dotenv = require("dotenv");
+const MySQLStore = require("express-mysql-session")(session);
+const mysql = require("mysql2");
+
 dotenv.config();
 
 var app = express();
+const dbOptions = {
+  host: "localhost",
+  port: "3306",
+  user: "root",
+  password: "nhan.nguyen1606",
+  database: "localtdlogistics",
+};
 
+const pool = mysql.createPool(dbOptions);
+
+const sessionStore = new MySQLStore({tableName: 'sessions'}, pool);
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
+app.enable("trust proxy");
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -26,21 +40,23 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors({
-  origin: ["http://localhost:3002"],
+  origin: ["http://localhost:3002", "http://127.0.0.1:5500"],
   credentials: true
 }))
 
 const sessionMiddleware = session({
-	secret: process.env.SESSION_SECRET,
-	resave: false,
-	saveUninitialized: false,
-	cookie: {
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  store: sessionStore,
+  cookie: {
       // secure: false,
       // sameSite: 'None',
-      httpOnly: true,
+      httpOnly: false,
       maxAge: 12 * 60 * 60 * 1000,
-  	},
+  },
 });
+
 
 app.use(sessionMiddleware);
 app.use(passport.initialize());
