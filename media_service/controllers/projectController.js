@@ -390,100 +390,6 @@ const deleteProject = async (req, res) => {
     }
 }
 
-const uploadVideoImage = async (req, res) =>{
-    try {
-
-        if (!req.file) {
-            return res.status(HttpStatus.NOT_FOUND).json(new Response(false, "File không được để trống"));
-        }
-
-        if (req.file.mimetype !== "image/jpg" && req.file.mimetype !== "image/jpeg" && req.file.mimetype !== "image/png" && req.file.mimetype !== "image/webp") { 
-            return res.status(HttpStatus.FORBIDDEN).json(new Response(false, "File không được cho phép"));         
-        }
-
-        const uploadDir = path.join(__dirname, '..', 'uploads', 'temp');
-        if (!fs.existsSync(uploadDir)) {
-            fs.mkdirSync(uploadDir, { recursive: true });
-        }
-        const filePath = path.join(uploadDir, req.file.filename);
-        
-        if (!fs.existsSync(filePath) || fs.lstatSync(filePath).isDirectory()) {
-            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(new Response(false, "Đã xảy ra lỗi. Vui lòng thử lại."));
-        }
-
-        const fileStream = fs.createReadStream(filePath);
-        const form = new FormData();
-        form.append("file", fileStream, req.file.originalname);
-
-        let response;
-        try {
-            response = await axios.post(
-                "http://localhost:3001/v1/files/upload?path=general_website/media/img_video&option=default",
-                form,
-                {
-                    headers: {
-                        ...form.getHeaders(),
-                    },
-                    validateStatus: function (status) {
-                        return status >= 200 && status <= 500;
-                    }
-                }
-            );
-        } catch (error) {
-            return res.status(HttpStatus.CONFLICT).json(new Response(false, error));
-        }
-
-        if (response.status < 200 || response.status > 299) {
-            fs.unlinkSync(filePath);
-            return res.status(response.status).json(new Response(false, response.data.message));
-        }
-
-        const pathname = path.join(__dirname, "..", "..", "file_server", "uploads", "main", "general_website", "media", "img_video");
-        // console.log(pathname);
-        const data = new Object({
-            pathName: path.join(pathname, req.file.originalname)
-        });
-
-        fs.unlinkSync(filePath);
-
-        return res.status(HttpStatus.CREATED).json(new Response(true, "Lưu hình ảnh thành công", data));
-    } catch (error) {
-        console.error('Error uploading file:', error);
-        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(new Response(false, "Đã xảy ra lỗi. Vui lòng thử lại."));
-    }
-};
-
-const getVideoImage = async (req, res) => {
-    try {
-        const { error } = validationService.validateGettingImage(req.query);
-        if (error) {
-            return res.status(HttpStatus.BAD_REQUEST).json(new Response(false, "Thông tin không hợp lệ"));
-        }
-
-        let response;
-        try {
-            response = await axios.get(`http://localhost:3001/v1/files?path=general_website/media/${req.query.path}&option=default`, {
-                responseType: 'stream'
-            });
-        } catch (error) {
-            console.log(error);
-            if (error.response.status == 404) {
-                return res.status(HttpStatus.NOT_FOUND).json(new Response(false, "File không tồn tại"));
-            }
-            else {
-                return res.status(error.response.status).json(new Response(false, "Đã xảy ra lỗi. Vui lòng thử lại"));
-            }
-        }
-
-        // res.setHeader('Content-Disposition', `attachment; filename="${resultGettingPost[0].file}"`);
-        res.setHeader('Content-Type', response.headers['content-type']);
-
-        response.data.pipe(res);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, message: "An error occurred while fetching the file" });
-    }
-};
 
 module.exports = {
     createNewProject,
@@ -492,6 +398,4 @@ module.exports = {
     getFile,
     getProjects,
     deleteProject,
-    uploadVideoImage,
-    getVideoImage,
 }

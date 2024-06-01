@@ -47,8 +47,7 @@ router.post("/project/get", projectController.getProjects);
 router.get("/project/file", projectController.getFile);
 router.delete("/project", projectController.deleteProject);
 
-router.post("/uploadImg", auth.isAuthenticated(), diskStorage.upload.single(diskStorage.fieldName), projectController.uploadVideoImage)
-router.get("/getImg",auth.isAuthenticated(), projectController.getVideoImage);
+
 
 module.exports = router;
 

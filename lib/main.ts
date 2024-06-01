@@ -50,7 +50,7 @@ export async function login(username: string, password: string) {
     }
 }
 
-// File must be archived first (.zip type), it's not allowed to receive other file types 
+// Tạo project 
 export async function createProject (creatProjectInfo: CreatingProject) {
     try {
         const response: AxiosResponse = await axios.post("http://localhost:3000/v1/media/project/create", creatProjectInfo,
@@ -67,6 +67,7 @@ export async function createProject (creatProjectInfo: CreatingProject) {
     }
 }
 
+// lấy thông tin project đã tạo
 export async function getProjects(criteria?: GettingPostCriteria) {
     try {
         const response: AxiosResponse = await axios.post("http://localhost:3000/v1/media/project/get", criteria || {}, {
@@ -80,6 +81,7 @@ export async function getProjects(criteria?: GettingPostCriteria) {
     }
 }
 
+// upload những file liên quan đến project giống như latex
 export async function uploadFileBelongToProject(postPayload: UploadingFileInfo) {
     try {
         const formData = new FormData();
@@ -99,6 +101,7 @@ export async function uploadFileBelongToProject(postPayload: UploadingFileInfo) 
     }
 }
 
+//lưu bài viết
 export async function savePost(postPayload: UploadingFileInfo) {
     try {
         const formData = new FormData();
@@ -118,6 +121,7 @@ export async function savePost(postPayload: UploadingFileInfo) {
     }
 }
 
+//lấy file 
 export async function getFile(criteria: GettingFileCriteria) {
     try {
         const response: AxiosResponse = await axios.get(`http://localhost:3000/v1/media/project/file?project_id=${criteria.project_id}&file=${criteria.fileName}`, {
@@ -137,6 +141,7 @@ export async function getFile(criteria: GettingFileCriteria) {
     }
 }
 
+// xóa project bằng project_id
 export async function deleteProject(condition: conditionQueryProject) {
     try {
         const response: AxiosResponse = await axios.delete(`http://localhost:3000/v1/media/project?project_id=${condition.project_id}`,{
