@@ -59,7 +59,7 @@ export async function createProject (creatProjectInfo: CreatingProject) {
             }
         );
 
-        return { error: response.data.success, message: response.data.message, data: response.data.data };
+        return { success: response.data.success, message: response.data.message, data: response.data.data };
     } catch (error: any) {
         console.error('Error uploading post:', error?.response?.data);
         console.error("Request that caused the error: ", error?.request);
@@ -72,7 +72,7 @@ export async function getProjects(criteria?: GettingPostCriteria) {
         const response: AxiosResponse = await axios.post("http://localhost:3000/v1/media/project/get", criteria || {}, {
             withCredentials: true,
         });
-        return { error: response.data.success, message: response.data.message, data: response.data.data };
+        return { success: response.data.success, message: response.data.message, data: response.data.data };
     } catch (error: any) {
         console.error('Error getting posts:', error?.response?.data);
         console.error("Request that caused the error: ", error?.request);
@@ -91,7 +91,7 @@ export async function uploadFileBelongToProject(postPayload: UploadingFileInfo) 
                 withCredentials: true,
             }
         );
-        return { error: response.data.success, message: response.data.message, data: response.data.data };
+        return { success: response.data.success, message: response.data.message, data: response.data.data };
     } catch (error: any) {
         console.error('Error uploading post:', error?.response?.data);
         console.error("Request that caused the error: ", error?.request);
@@ -110,7 +110,7 @@ export async function savePost(postPayload: UploadingFileInfo) {
                 withCredentials: true,
             }
         );
-        return { error: response.data.success, message: response.data.message, data: response.data.data };
+        return { success: response.data.success, message: response.data.message, data: response.data.data };
     } catch (error: any) {
         console.error('Error uploading post:', error?.response?.data);
         console.error("Request that caused the error: ", error?.request);
@@ -142,7 +142,7 @@ export async function deleteProject(condition: conditionQueryProject) {
         const response: AxiosResponse = await axios.delete(`http://localhost:3000/v1/media/project?project_id=${condition.project_id}`,{
             withCredentials: true
         });
-        return { error: response.data.success, message: response.data.message};
+        return { success: response.data.success, message: response.data.message};
     } catch (error: any) {
         console.error('Error getting posts:', error?.response?.data);
         console.error("Request that caused the error: ", error?.request);
