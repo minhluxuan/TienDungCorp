@@ -68,7 +68,7 @@ const createNewProject = async (req, res) => {
             return res.status(HttpStatus.CONFLICT).json(new Response(false, "Tạo dự án mới thất bại"));
         }
 
-        return res.status(HttpStatus.CREATED).json(new Response(true, "Tạo dự án thành công"))
+        return res.status(HttpStatus.CREATED).json(new Response(true, "Tạo dự án thành công", data))
     } catch (error) {
         console.log(error);
         return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(new Response(false, "Đã xảy ra lỗi. Vui lòng thử lại"));
