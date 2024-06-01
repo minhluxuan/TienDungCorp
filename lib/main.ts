@@ -142,7 +142,7 @@ export async function deleteProject(condition: conditionQueryProject) {
         const response: AxiosResponse = await axios.delete(`http://localhost:3000/v1/media/project?project_id=${condition.project_id}`,{
             withCredentials: true
         });
-        return { error: response.data.success, message: response.data.message, data: response.data.data };
+        return { error: response.data.success, message: response.data.message};
     } catch (error: any) {
         console.error('Error getting posts:', error?.response?.data);
         console.error("Request that caused the error: ", error?.request);
