@@ -53,7 +53,7 @@ export async function login(username: string, password: string) {
 // File must be archived first (.zip type), it's not allowed to receive other file types 
 export async function createProject (creatProjectInfo: CreatingProject) {
     try {
-        const response: AxiosResponse = await axios.post("http://localhost:3000/v1/media/project", creatProjectInfo,
+        const response: AxiosResponse = await axios.post("http://localhost:3000/v1/media/project/create", creatProjectInfo,
             {
                 withCredentials: true,
             }
