@@ -1,17 +1,16 @@
 import axios, { AxiosResponse } from "axios";
-import { error } from "console";
 const FormData = require("form-data");
-import * as JSZip from 'jszip';
-import path from "path";
 
-export interface UploadingPostPayload {
+export interface CreatingProject {
+    name: String,
     title: String,
     author: String,
     type: Number,
-    file: File
+
 }
 
-export interface UploadingFilePayload {
+export interface UploadingFileInfo {
+    project_id: String,
     file: File
 }
 
@@ -21,19 +20,18 @@ export interface GettingPostCriteria {
     title: String,
     yearEnd: Number,
     yearStart: Number,
+    name: String,
 }
 
 export interface GettingFileCriteria {
-    id: String,
+    project_id: String,
+    fileName: String,
 }
 
-export interface uploadImg {
-    file: File
+export interface conditionQueryProject {
+    project_id: String,
 }
 
-export interface GettingFileImg {
-    path: string
-}
 
 export async function login(username: string, password: string) {
     try {
@@ -53,14 +51,13 @@ export async function login(username: string, password: string) {
 }
 
 // File must be archived first (.zip type), it's not allowed to receive other file types 
-export async function uploadPost(postPayload: UploadingPostPayload) {
+export async function createProject (creatProjectInfo: CreatingProject) {
     try {
-        const formData = new FormData();
-        formData.append('title', postPayload.title);
-        formData.append('author', postPayload.author);
-        formData.append('file', postPayload.file);
-
-        const response: AxiosResponse = await axios.post("http://localhost:3000/v1/media/upload", formData);
+        const response: AxiosResponse = await axios.post("http://localhost:3000/v1/media/project", creatProjectInfo,
+            {
+                withCredentials: true,
+            }
+        );
 
         return { error: response.data.success, message: response.data.message, data: response.data.data };
     } catch (error: any) {
@@ -70,29 +67,11 @@ export async function uploadPost(postPayload: UploadingPostPayload) {
     }
 }
 
-// Response will be zipped file
-export async function getFile(criteria: GettingFileCriteria) {
+export async function getProjects(criteria?: GettingPostCriteria) {
     try {
-        const response: AxiosResponse = await axios.get(`http://localhost:3000/v1/media/file?id=${criteria.id}`, {
+        const response: AxiosResponse = await axios.post("http://localhost:3000/v1/media/project/get", criteria || {}, {
             withCredentials: true,
-            responseType: 'arraybuffer',
         });
-
-        const blob = new Blob([response.data], { type: response.headers['content-type'] });
-        const imgUrl = URL.createObjectURL(blob);
-
-        return { data: imgUrl}
-
-    } catch (error: any) {
-        console.error('Error getting file:', error?.response?.data);
-        console.error("Request that caused the error: ", error?.request);
-        return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null }; // Ném lỗi để xử lý bên ngoài
-    }
-}
-
-export async function getPosts(criteria?: GettingPostCriteria) {
-    try {
-        const response: AxiosResponse = await axios.post("http://localhost:3000/v1/media/post", criteria || {});
         return { error: response.data.success, message: response.data.message, data: response.data.data };
     } catch (error: any) {
         console.error('Error getting posts:', error?.response?.data);
@@ -101,14 +80,17 @@ export async function getPosts(criteria?: GettingPostCriteria) {
     }
 }
 
-export async function uploadImg(postPayload: uploadImg) {
+export async function uploadFileBelongToProject(postPayload: UploadingFileInfo) {
     try {
         const formData = new FormData();
 
         formData.append('file', postPayload.file);
 
-        const response: AxiosResponse = await axios.post("http://localhost:3000/v1/media/uploadImg", formData);
-
+        const response: AxiosResponse = await axios.post(`http://localhost:3000/v1/media/project/file?project_id=${postPayload.project_id}`, formData,
+            {
+                withCredentials: true,
+            }
+        );
         return { error: response.data.success, message: response.data.message, data: response.data.data };
     } catch (error: any) {
         console.error('Error uploading post:', error?.response?.data);
@@ -117,9 +99,28 @@ export async function uploadImg(postPayload: uploadImg) {
     }
 }
 
-export async function getImg(pathFile: GettingFileImg) {
+export async function savePost(postPayload: UploadingFileInfo) {
     try {
-        const response: AxiosResponse = await axios.get(`http://localhost:3000/v1/media/getImg?path=${pathFile.path}`, {
+        const formData = new FormData();
+
+        formData.append('file', postPayload.file);
+
+        const response: AxiosResponse = await axios.post(`http://localhost:3000/v1/media/project/post?project_id=${postPayload.project_id}`, formData,
+            {
+                withCredentials: true,
+            }
+        );
+        return { error: response.data.success, message: response.data.message, data: response.data.data };
+    } catch (error: any) {
+        console.error('Error uploading post:', error?.response?.data);
+        console.error("Request that caused the error: ", error?.request);
+        return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null }; // Ném lỗi để xử lý bên ngoài
+    }
+}
+
+export async function getFile(criteria: GettingFileCriteria) {
+    try {
+        const response: AxiosResponse = await axios.get(`http://localhost:3000/v1/media/project/file?project_id=${criteria.project_id}&file=${criteria.fileName}`, {
             withCredentials: true,
             responseType: 'arraybuffer',
         });
@@ -135,5 +136,19 @@ export async function getImg(pathFile: GettingFileImg) {
         return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null }; // Ném lỗi để xử lý bên ngoài
     }
 }
+
+export async function deleteProject(condition: conditionQueryProject) {
+    try {
+        const response: AxiosResponse = await axios.delete(`http://localhost:3000/v1/media/project?project_id=${condition.project_id}`,{
+            withCredentials: true
+        });
+        return { error: response.data.success, message: response.data.message, data: response.data.data };
+    } catch (error: any) {
+        console.error('Error getting posts:', error?.response?.data);
+        console.error("Request that caused the error: ", error?.request);
+        return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null }; // Ném lỗi để xử lý bên ngoài
+    }
+}
+
 
 
