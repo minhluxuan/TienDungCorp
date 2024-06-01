@@ -59,7 +59,7 @@ export async function createProject (creatProjectInfo: CreatingProject) {
             }
         );
 
-        return { error: response.data.success, message: response.data.message, data: response.data.data };
+        return { error: response.data.success, message: response.data.message};
     } catch (error: any) {
         console.error('Error uploading post:', error?.response?.data);
         console.error("Request that caused the error: ", error?.request);
