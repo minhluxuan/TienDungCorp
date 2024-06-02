@@ -12,8 +12,8 @@ const dbOptions = {
     host: "localhost",
     port: 3306,
     user: "root",
-    password: "",
-    database: "tiendungcorp",
+    password: "nhan.nguyen1606",
+    database: "localtdlogistics",
 };
 
 const pool = mysql.createPool(dbOptions).promise();

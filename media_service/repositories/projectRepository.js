@@ -12,8 +12,8 @@ const dbOptions = {
     host: "localhost",
     port: 3306,
     user: "root",
-    password: "",
-    database: "tiendungcorp",
+    password: "nhan.nguyen1606",
+    database: "localtdlogistics",
 };
 
 const pool = mysql.createPool(dbOptions).promise();
@@ -29,12 +29,12 @@ const insert = async (data) => {
 
 const existById = async (id) => {
     const query = "SELECT * FROM project WHERE id = ?";
-    return (await pool.query(query, id))[0].length > 0;
+    return (await pool.query(query, [id]))[0].length > 0;
 }
 
 const findById = async (id) => {
     const query = "SELECT * FROM project WHERE id = ?";
-    return (await pool.query(query, id))[0];
+    return (await pool.query(query, [id]))[0];
 }
 
 const find = async (criteria) => {
@@ -89,7 +89,7 @@ const deleteById = async (id) => {
     }
 
     const query = "DELETE FROM project WHERE id = ?";
-    return (await pool.query(query, id))[0];
+    return (await pool.query(query, [id]))[0];
 }
 
 module.exports = {
