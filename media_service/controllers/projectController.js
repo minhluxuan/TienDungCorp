@@ -295,7 +295,7 @@ const savePost = async (req, res) => {
         }
 
         await axios.delete(
-            `http://localhost:3001/v1/files/delete?path=general_website/project/${resultGettingOneProject[0].name}/main.md`,
+            `http://localhost:3001/v1/files/delete?path=general_website/project/${resultGettingOneProject[0].name}/main.html`,
             {
                 validateStatus: function (status) {
                     return status >= 200 && status <= 500;

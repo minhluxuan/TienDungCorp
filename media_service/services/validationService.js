@@ -11,7 +11,7 @@ const validateCreatingNewProject = (data) => {
 
 const validateProjectId = (data) => {
     return Joi.object({
-        project_id: Joi.string(),
+        id: Joi.string(),
     }).strict().validate(data);
 }
 

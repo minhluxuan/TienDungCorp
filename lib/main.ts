@@ -25,7 +25,7 @@ export interface GettingPostCriteria {
 
 export interface GettingFileCriteria {
     project_id: String,
-    fileName: String,
+    file: String,
 }
 
 export interface conditionQueryProject {
@@ -108,7 +108,7 @@ export async function savePost(postPayload: UploadingFileInfo) {
 
         formData.append('file', postPayload.file);
 
-        const response: AxiosResponse = await axios.post(`http://localhost:3000/v1/media/project/post?project_id=${postPayload.project_id}`, formData,
+        const response: AxiosResponse = await axios.post(`http://localhost:3000/v1/media/project/post?id=${postPayload.project_id}`, formData,
             {
                 withCredentials: true,
             }
@@ -124,7 +124,7 @@ export async function savePost(postPayload: UploadingFileInfo) {
 //lấy file 
 export async function getFile(criteria: GettingFileCriteria) {
     try {
-        const response: AxiosResponse = await axios.get(`http://localhost:3000/v1/media/project/file?project_id=${criteria.project_id}&file=${criteria.fileName}`, {
+        const response: AxiosResponse = await axios.get(`http://localhost:3000/v1/media/project/file?project_id=${criteria.project_id}&file=${criteria.file}`, {
             withCredentials: true,
             responseType: 'arraybuffer',
         });
