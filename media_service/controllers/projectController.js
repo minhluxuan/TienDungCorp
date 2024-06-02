@@ -443,7 +443,7 @@ const deleteProject = async (req, res) => {
             }
         });
 
-        await projectService.deleteProject(req.query.project_id);
+        await projectService.deleteProject(req.query.id);
         return res.status(HttpStatus.OK).json(new Response(true, "Xoá dự án thành công"));
     } catch (error) {
         console.log(error);

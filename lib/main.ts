@@ -144,7 +144,7 @@ export async function getFile(criteria: GettingFileCriteria) {
 // xóa project bằng project_id
 export async function deleteProject(condition: conditionQueryProject) {
     try {
-        const response: AxiosResponse = await axios.delete(`http://localhost:3000/v1/media/project?project_id=${condition.project_id}`,{
+        const response: AxiosResponse = await axios.delete(`http://localhost:3000/v1/media/project?id=${condition.project_id}`,{
             withCredentials: true
         });
         return { success: response.data.success, message: response.data.message};
