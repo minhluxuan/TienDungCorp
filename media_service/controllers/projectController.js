@@ -53,6 +53,67 @@ const createNewProject = async (req, res) => {
             return res.status(response.status).json(new Response(false, "Tạo dự án mới thất bại"));
         }
 
+
+        const filePath = "./main.html";
+        const content = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Document</title>
+        </head>
+        <body>
+            <p>Hello {"(^^)"}</p>
+            <p>
+            Nội dung bài viết sẽ được viết ở đây, bạn có thể thêm hình ảnh,
+            video, đường dẫn,...
+            </p>
+            <p>
+            <br />
+            </p>
+        </body>
+        </html>
+        `;
+
+        fs.writeFileSync(filePath, content, (err) => {
+            if (err) {
+                console.error('Có lỗi xảy ra khi tạo file:', err);
+            } else {
+                console.log(`File ${filePath} đã được tạo thành công với nội dung!`);
+            }
+        });
+
+        const fileStream = fs.createReadStream(filePath);
+        const form = new FormData();
+        form.append("file", fileStream, "main.html");
+        try {
+            responseCreatingDefaultFile = await axios.post(
+                `http://localhost:3001/v1/files/upload?path=general_website/project/${req.body.name}&option=default`,
+                form,
+                {
+                    headers: {
+                        ...form.getHeaders(),
+                    },
+                    validateStatus: function (status) {
+                        return status >= 200 && status <= 500;
+                    }
+                }
+            );
+        } catch (error) {
+            fs.unlinkSync(filePath);
+            return res.status(HttpStatus.CONFLICT).json(new Response(false, error));
+        }
+
+        if (response.status < 200 || response.status > 299) {
+            fs.unlinkSync(filePath);
+            return res.status(response.status).json(new Response(false, response.data.message));
+        }
+        else
+        {
+            fs.unlinkSync(filePath);
+        }
+
         const data = new Object({
             id: uuidv4(),
             name: req.body.name,
