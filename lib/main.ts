@@ -88,7 +88,7 @@ export async function uploadFileBelongToProject(postPayload: UploadingFileInfo) 
 
         formData.append('file', postPayload.file);
 
-        const response: AxiosResponse = await axios.post(`http://localhost:3000/v1/media/project/file?project_id=${postPayload.project_id}`, formData,
+        const response: AxiosResponse = await axios.post(`http://localhost:3000/v1/media/project/file?id=${postPayload.project_id}`, formData,
             {
                 withCredentials: true,
             }
