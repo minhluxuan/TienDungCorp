@@ -430,7 +430,7 @@ const deleteProject = async (req, res) => {
             return res.status(HttpStatus.BAD_REQUEST).json(new Response(false, "Thông tin không hợp lệ"));
         }
 
-        const resultGettingProject = await projectService.getProjectById(req.query.project_id);
+        const resultGettingProject = await projectService.getProjectById(req.query.id);
         if (!resultGettingProject || resultGettingProject.length === 0) {
             return res.status(HttpStatus.NOT_FOUND).json(new Response(false, "Dự án không tồn tại"));
         }
