@@ -451,6 +451,55 @@ const deleteProject = async (req, res) => {
     }
 }
 
+const deleteFile = async (req, res) => {
+    try {
+        const { error } = validationService.validateGettingFile(req.query);
+        if (error) {
+            return res.status(HttpStatus.BAD_REQUEST).json(new Response(false, "Thông tin không hợp lệ"));
+        }
+
+        const resultGettingProject = await projectService.getProjectById(req.query.project_id);
+        if (!resultGettingProject || resultGettingProject.length === 0) {
+            return res.status(HttpStatus.NOT_FOUND).json(new Response(false, "Dự án không tồn tại"));
+        }
+
+        const responseCheckingExistProject = await axios.get(
+            `http://localhost:3001/v1/files/check?path=general_website/project/${resultGettingProject[0].name}`,
+            {
+                validateStatus: function (status) {
+                    return status >= 200 && status <= 500;
+                }
+            }
+        );
+
+        if (responseCheckingExistProject.status < 200 || responseCheckingExistProject.status > 299) {
+            return res.status(responseCheckingExistProject.status).json(new Response(false, responseCheckingExistProject.data.message));
+        }
+
+        if (!responseCheckingExistProject.data.data.existed) {
+            return res.status(HttpStatus.CONFLICT).json(new Response(false, "Dự án không tồn tại"));
+        }
+
+        const responseDeleteFile = await axios.delete(
+            `http://localhost:3001/v1/files/delete?path=general_website/project/${resultGettingProject[0].name}/${req.query.file}`,
+            {
+                validateStatus: function (status) {
+                    return status >= 200 && status <= 500;
+                }
+            }
+        );
+
+        if (responseDeleteFile.status < 200 || responseDeleteFile.status > 299) {
+            return res.status(responseDeleteFile.status).json(new Response(false, responseDeleteFile.data.message));
+        }
+     
+        res.status(HttpStatus.OK).json(new Response(true, "Xóa file thành công"));
+        
+    } catch (error) {
+        console.error(error);
+        res.status(500).json(new Response(false, "Đã xảy ra lỗi. Vui lòng thử lại"));
+    }
+};
 
 module.exports = {
     createNewProject,
@@ -459,4 +508,5 @@ module.exports = {
     getFile,
     getProjects,
     deleteProject,
+    deleteFile
 }
