@@ -43,8 +43,8 @@ router.post("/login", passport.authenticate("normalLogin"), (req, res, next) => 
 router.post("/project/create",auth.isAuthenticated(), projectController.createNewProject);
 router.post("/project/file", auth.isAuthenticated(), diskStorage.upload.single(diskStorage.fieldName), projectController.uploadFileBelongToProject);
 router.post("/project/post", auth.isAuthenticated(), diskStorage.upload.single(diskStorage.fieldName), projectController.savePost);
-router.post("/project/get", auth.isAuthenticated(), projectController.getProjects);
-router.get("/project/file", auth.isAuthenticated(), projectController.getFile);
+router.post("/project/get", projectController.getProjects);
+router.get("/project/file", projectController.getFile);
 router.delete("/project", auth.isAuthenticated(), projectController.deleteProject);
 router.delete("/project/file", auth.isAuthenticated(), projectController.deleteFile);
 
