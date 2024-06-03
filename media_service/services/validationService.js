@@ -30,6 +30,7 @@ const validateGettingPost = (data) => {
         title: Joi.string(),
         yearEnd: Joi.number().min(2024),
         yearStart: Joi.number().min(2024),
+        type: Joi.number(),
     }).strict().validate(data);
 }
 

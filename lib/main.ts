@@ -15,12 +15,13 @@ export interface UploadingFileInfo {
 }
 
 export interface GettingPostCriteria {
-    id: String,
-    author: String,
-    title: String,
-    yearEnd: Number,
-    yearStart: Number,
-    name: String,
+    id?: String,
+    author?: String,
+    title?: String,
+    yearEnd?: Number,
+    yearStart?: Number,
+    name?: String,
+    type?: Number,
 }
 
 export interface GettingFileCriteria {
