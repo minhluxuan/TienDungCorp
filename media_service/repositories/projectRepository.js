@@ -95,17 +95,18 @@ const find = async (criteria) => {
     let whereClauses = [];
   
     if (criteria.yearStart && criteria.yearEnd) {
-      const yearStart = criteria.yearStart;
-      const yearEnd = criteria.yearEnd;
-  
-      delete criteria.yearStart;
-      delete criteria.yearEnd;
-  
-      const startDate = new Date(yearStart, 1, 1);
-      const endDate = new Date(yearEnd, 12, 31);
-  
-      whereClauses.push("date_created >= ? AND date_created < ?");
-      values.push(startDate.toISOString(), endDate.toISOString());
+        const yearStart = criteria.yearStart;
+        const yearEnd = criteria.yearEnd;
+    
+        delete criteria.yearStart;
+        delete criteria.yearEnd;
+    
+        const startDate = new Date(yearStart, 0, 1);
+        const endDate = new Date(yearEnd + 1, 0, 1);
+
+    
+        whereClauses.push("date_created >= ? AND date_created < ?");
+        values.push(startDate.toISOString(), endDate.toISOString());
     }
   
     if (criteria.title) {
