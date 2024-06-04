@@ -39,6 +39,8 @@ const findById = async (id) => {
 
 const find = async (criteria) => {
     let fields = Object.keys(criteria);
+    let values = Object.values(criteria);
+
     // Check if there are no fields or values
     if (!fields || !values || fields.length === 0 || values.length === 0) {
         const query = "SELECT * FROM project";
@@ -47,8 +49,6 @@ const find = async (criteria) => {
 
     // Check if monthCreated and yearCreated are provided
     if (criteria.yearStart && criteria.yearEnd) {
-
-        let values = Object.values(criteria);
         const yearStart = criteria.yearStart;
         const yearEnd = criteria.yearEnd;
 
@@ -78,7 +78,7 @@ const find = async (criteria) => {
         return (await pool.query(query, values))[0];
     }
 
-    let values = Object.values(criteria).map(value => `%${value}%`);
+    values = Object.values(criteria).map(value => `%${value}%`);
 
 
     // Build the query for criteria without date conditions
