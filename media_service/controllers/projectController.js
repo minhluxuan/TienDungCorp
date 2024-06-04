@@ -121,7 +121,8 @@ const createNewProject = async (req, res) => {
             title: req.body.title,
             date_created: formattedDate,
             date_modified: formattedDate,
-            type: req.body.type
+            type: req.body.type,
+            description: req.body.description
         });
 
         const resultCreatingNewProject = await projectService.saveProject(data);

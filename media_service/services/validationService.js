@@ -5,7 +5,8 @@ const validateCreatingNewProject = (data) => {
         name: Joi.string().required(),
         title: Joi.string(),
         author: Joi.string(),
-        type: Joi.number()
+        type: Joi.number().required(),
+        description: Joi.string(),
     }).strict().validate(data);
 }
 

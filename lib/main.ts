@@ -6,7 +6,7 @@ export interface CreatingProject {
     title: String,
     author: String,
     type: Number,
-
+    description: String
 }
 
 export interface UploadingFileInfo {
