@@ -501,6 +501,123 @@ const deleteFile = async (req, res) => {
     }
 };
 
+const saveImgDescription = async (req, res) => {
+    const formattedDate = moment().format("YYYY-MM-DD");
+
+    const uploadDir = path.join(__dirname, '..', 'uploads', 'temp');
+    if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+    }
+
+    const filePath = path.join(uploadDir, req.file.filename);
+
+    if (!fs.existsSync(filePath) || fs.lstatSync(filePath).isDirectory()) {
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(new Response(false, "Đã xảy ra lỗi. Vui lòng thử lại."));
+    }
+    try {
+        const { error } = validationService.validateProjectId(req.query);
+        if (error) {
+            fs.unlinkSync(filePath);
+            return res.status(HttpStatus.BAD_REQUEST).json(new Response(false, "Thông tin không hợp lệ"));
+        }
+        
+        if (!req.file) {
+            return res.status(HttpStatus.BAD_REQUEST).json(new Response(false, "File không được phép để trống"));
+        }
+
+        if (req.file.mimetype !== 'image/jpeg' && req.file.mimetype !== 'image/gif' && req.file.mimetype !== 'image/png')
+        {
+            fs.unlinkSync(filePath);
+            return res.status(HttpStatus.FORBIDDEN).json(new Response(false, "Chỉ đăng tải hình ảnh"));
+        }
+
+        const resultGettingOneProject = await projectService.getProjectById(req.query.id);
+        if (!resultGettingOneProject || resultGettingOneProject.length === 0) {
+            fs.unlinkSync(filePath);
+            return res.status(HttpStatus.NOT_FOUND).json(new Response(false, "Dự án không tồn tại"));
+        }
+
+        const responseCheckingExistProject = await axios.get(
+            `http://localhost:3001/v1/files/check?path=general_website/project/${resultGettingOneProject[0].name}`,
+            {
+                validateStatus: function (status) {
+                    return status >= 200 && status <= 500;
+                }
+            }
+        );
+
+        if (responseCheckingExistProject.status < 200 || responseCheckingExistProject.status > 299) {
+            fs.unlinkSync(filePath);
+            return res.status(responseCheckingExistProject.status).json(new Response(false, responseCheckingExistProject.data.message));
+        }
+
+        if (!responseCheckingExistProject.data.data.existed) {
+            fs.unlinkSync(filePath);
+            return res.status(HttpStatus.CONFLICT).json(new Response(false, "Dự án không tồn tại"));
+        }
+
+        await axios.delete(
+            `http://localhost:3001/v1/files/delete?path=general_website/project/${resultGettingOneProject[0].name}/default.png`,
+            {
+                validateStatus: function (status) {
+                    return status >= 200 && status <= 500;
+                }
+            }
+        );
+
+        await fileService.deleteFile({ project_id: req.query.id, file: "default.png"});
+
+        const fileStream = fs.createReadStream(filePath);
+        const form = new FormData();
+        form.append("file", fileStream, "default.png");
+
+        let response;
+        try {
+            response = await axios.post(
+                `http://localhost:3001/v1/files/upload?path=general_website/project/${resultGettingOneProject[0].name}&option=default`,
+                form,
+                {
+                    headers: {
+                        ...form.getHeaders(),
+                    },
+                    validateStatus: function (status) {
+                        return status >= 200 && status <= 500;
+                    }
+                }
+            );
+        } catch (error) {
+            fs.unlinkSync(filePath);
+            return res.status(HttpStatus.CONFLICT).json(new Response(false, error));
+        }
+
+        if (response.status < 200 || response.status > 299) {
+            fs.unlinkSync(filePath);
+            return res.status(response.status).json(new Response(false, response.data.message));
+        }
+
+        const data = new Object({
+            project_id: req.query.id,
+            file: "default.png",
+            date_created: formattedDate,
+        });
+
+        const resultSavingPost = await fileService.saveFile(data);
+        if (!resultSavingPost || resultSavingPost.affectedRows === 0) {
+            fs.unlinkSync(filePath);
+            throw new Error("Error saving post");
+        }
+
+        fs.unlinkSync(filePath);
+
+        return res.status(HttpStatus.CREATED).json(new Response(true, "Đăng tải file thành công", data));
+    } catch (error) {
+        fs.unlinkSync(filePath);
+        console.log(error);
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(new Response(false, "Đã xảy ra lỗi. Vui lòng thử lại."));
+    }
+}
+
+
 module.exports = {
     createNewProject,
     uploadFileBelongToProject,
@@ -508,5 +625,6 @@ module.exports = {
     getFile,
     getProjects,
     deleteProject,
-    deleteFile
+    deleteFile,
+    saveImgDescription
 }

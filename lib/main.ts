@@ -173,3 +173,22 @@ export async function deleteFile(criteria: GettingFileCriteria) {
     }
 }
 
+//lưu hình ảnh mô tả
+export async function saveImgDescription(postPayload: UploadingFileInfo) {
+    try {
+        const formData = new FormData();
+
+        formData.append('file', postPayload.file);
+
+        const response: AxiosResponse = await axios.post(`http://localhost:3000/v1/media/project/post_default?id=${postPayload.project_id}`, formData,
+            {
+                withCredentials: true,
+            }
+        );
+        return { success: response.data.success, message: response.data.message, data: response.data.data };
+    } catch (error: any) {
+        console.error('Error uploading post:', error?.response?.data);
+        console.error("Request that caused the error: ", error?.request);
+        return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null }; // Ném lỗi để xử lý bên ngoài
+    }
+}
