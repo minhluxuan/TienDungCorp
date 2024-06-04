@@ -122,7 +122,7 @@ const find = async (criteria) => {
     }
   
     if (whereClauses.length > 0) {
-      query +=  `WHERE ${whereClauses.join(" AND ")}`;
+      query +=  ` WHERE ${whereClauses.join(" AND ")}`;
     }
   
     const [results] = await pool.query(query, values);
