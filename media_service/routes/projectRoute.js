@@ -39,6 +39,7 @@ router.post("/login", passport.authenticate("normalLogin"), (req, res, next) => 
       return res.status(200).json({ error: false, valid: true, message: "Xác thực thành công." });
   })(req, res, next);
 });
+router.get("/logout", auth.isAuthenticated(), projectController.logout);
 
 router.post("/project/create",auth.isAuthenticated(), projectController.createNewProject);
 router.post("/project/file", auth.isAuthenticated(), diskStorage.upload.single(diskStorage.fieldName), projectController.uploadFileBelongToProject);
@@ -48,7 +49,6 @@ router.post("/project/get", projectController.getProjects);
 router.get("/project/file", projectController.getFile);
 router.delete("/project", auth.isAuthenticated(), projectController.deleteProject);
 router.delete("/project/file", auth.isAuthenticated(), projectController.deleteFile);
-
 
 module.exports = router;
 

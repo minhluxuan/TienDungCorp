@@ -33,7 +33,7 @@ export interface conditionQueryProject {
     project_id: String,
 }
 
-
+// đăng nhập
 export async function login(username: string, password: string) {
     try {
         const response: AxiosResponse = await axios.post("http://localhost:3000/v1/media/login", {
@@ -44,6 +44,23 @@ export async function login(username: string, password: string) {
         });
 
         return { error: response.data.error, message: response.data.message, valid: response.data.valid };
+    } catch (error: any) {
+        console.error('Error uploading post:', error?.response?.data);
+        console.error("Request that caused the error: ", error?.request);
+        return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null }; // Ném lỗi để xử lý bên ngoài
+    }
+}
+
+//đăng xuất
+export async function logout () {
+    try {
+        const response: AxiosResponse = await axios.get("http://localhost:3000/v1/media/logout",
+            {
+                withCredentials: true,
+            }
+        );
+
+        return { success: response.data.success, message: response.data.message};
     } catch (error: any) {
         console.error('Error uploading post:', error?.response?.data);
         console.error("Request that caused the error: ", error?.request);

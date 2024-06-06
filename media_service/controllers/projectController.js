@@ -618,6 +618,19 @@ const saveImgDescription = async (req, res) => {
     }
 }
 
+const logout = (req, res) => {
+	try {
+		req.logout(() => {
+			req.session.destroy();
+		});
+
+		return res.status(HttpStatus.OK).json(new Response(true, "Đăng xuất thành công"));
+        
+	} catch (error) {
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(new Response(false, "Đã xảy ra lỗi. Vui lòng thử lại."));
+	}
+} 
+
 
 module.exports = {
     createNewProject,
@@ -627,5 +640,6 @@ module.exports = {
     getProjects,
     deleteProject,
     deleteFile,
-    saveImgDescription
+    saveImgDescription,
+    logout
 }
