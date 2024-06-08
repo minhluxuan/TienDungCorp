@@ -51,21 +51,14 @@ app.use('/users', usersRouter);
 app.use("/v1/media", projectRouter);
 
 app.get("/get_session", (req, res) => {
-  console.log(req.session);
-  res.status(200).json({
-      error: false,
-      message: "Lấy phiên đăng nhập thành công.",
-  });
+  return res.status(200).json(new Response(true, "Lấy phiên đăng nhập thành công", req.user));
 });
 
 app.get("/destroy_session", (req, res) => {
   req.logout(() => {
       req.session.destroy();
   });
-  return res.status(200).json({
-      error: false,
-      message: "Hủy phiên hoạt động thành công.",
-  });
+  return res.status(200).json(new Response(true, "Hủy phiên đăng nhập thành công"));
 });
 
 passport.serializeUser(auth.setSession);

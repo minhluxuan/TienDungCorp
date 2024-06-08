@@ -33,6 +33,21 @@ export interface conditionQueryProject {
     project_id: String,
 }
 
+
+export async function getSession() {
+    try {
+        const response: AxiosResponse = await axios.get("http://localhost:3000/get_session", {
+            withCredentials: true,
+        });
+
+        return { error: response.data.error, message: response.data.message, data: response.data.data };
+    } catch (error: any) {
+        console.error('Error uploading post:', error?.response?.data);
+        console.error("Request that caused the error: ", error?.request);
+        return { error: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null }; // Ném lỗi để xử lý bên ngoài
+    }
+}
+
 // đăng nhập
 export async function login(username: string, password: string) {
     try {
