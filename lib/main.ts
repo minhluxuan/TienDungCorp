@@ -40,7 +40,7 @@ export async function getSession() {
             withCredentials: true,
         });
 
-        return { error: response.data.error, message: response.data.message, data: response.data.data };
+        return { error: response.data.error, message: response.data.message, valid: response.data.data };
     } catch (error: any) {
         console.error('Error uploading post:', error?.response?.data);
         console.error("Request that caused the error: ", error?.request);
