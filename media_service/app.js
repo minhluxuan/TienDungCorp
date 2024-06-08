@@ -11,6 +11,7 @@ const auth = require("./lib/auth");
 const session = require("express-session");
 const passport = require("passport");
 const dotenv = require("dotenv");
+const Response = require("./models/Response");
 
 dotenv.config();
 
@@ -49,9 +50,11 @@ app.use(passport.session());
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use("/v1/media", projectRouter);
-
+ 
 app.get("/get_session", (req, res) => {
-  return res.status(200).json(new Response(true, "Lấy phiên đăng nhập thành công", req.user));
+  console.log(req.user);
+  let data =  req.user?true:false
+  return res.status(200).json(new Response(true, "Lấy phiên đăng nhập thành công", data));
 });
 
 app.get("/destroy_session", (req, res) => {
