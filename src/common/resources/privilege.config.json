@@ -1,0 +1,73 @@
+{
+    "account": {
+        "search": ["ADMIN", "SYS_ADMIN"],
+        "updatePersonal": [],
+        "updateUsers": ["ADMIN", "SYS_ADMIN"],
+        "updateAvatar": [],
+        "getAvatar": [],
+        "count": ["ADMIN", "SYS_ADMIN"],
+        "resetPassword": [],
+        "verifyOtp": []
+    },
+    "test": {
+        "createFromQuiz": ["ADMIN", "EXAM_ADMIN"],
+        "create": ["ADMIN", "EXAM_ADMIN"],
+        "search": [],
+        "findOne": [],
+        "update": ["ADMIN", "EXAM_ADMIN"],
+        "delete": ["ADMIN", "EXAM_ADMIN"]
+    },
+    "practice": {
+        "search": [],
+        "create": ["ADMIN", "EXAM_ADMIN"]
+    },
+    "record": {
+        "init": [],
+        "search": [],
+        "findOne": [],
+        "update": [],
+        "updateConfig": [],
+        "delete": ["ADMIN", "EXAM_ADMIN"]
+    },
+    "quiz": {
+        "create": ["ADMIN", "EXAM_ADMIN"],
+        "search": [],
+        "findOne": [],
+        "update": ["ADMIN", "EXAM_ADMIN"],
+        "delete": ["ADMIN", "EXAM_ADMIN"]
+    },
+    "ftag": {
+        "createPublic": ["ADMIN", "EXAM_ADMIN", "SYS_ADMIN"],
+        "createPrivate": [],
+        "search": [],
+        "findOne": [],
+        "update": [],
+        "updatePublic": ["ADMIN", "EXAM_ADMIN", "SYS_ADMIN"],
+        "delete": [],
+        "deletePublic": ["ADMIN", "EXAM_ADMIN", "SYS_ADMIN"]
+    },
+    "tag": {
+        "createPublic": ["ADMIN", "EXAM_ADMIN", "SYS_ADMIN"],
+        "createPrivate": [],
+        "search": [],
+        "findOne": [],
+        "update": [],
+        "updatePublic": ["ADMIN", "EXAM_ADMIN", "SYS_ADMIN"],
+        "delete": [],
+        "deletePublic": ["ADMIN", "EXAM_ADMIN", "SYS_ADMIN"]
+    },
+    "flashcard": {
+        "createPublic": ["ADMIN", "EXAM_ADMIN", "SYS_ADMIN"],
+        "createPrivate": [],
+        "search": [],
+        "findOne": [],
+        "update": [],
+        "updatePublic": ["ADMIN", "EXAM_ADMIN", "SYS_ADMIN"],
+        "delete": [],
+        "deletePublic": ["ADMIN", "EXAM_ADMIN", "SYS_ADMIN"]
+    },
+    "remarkRequest": {
+        "search": ["ADMIN", "EXAM_ADMIN"],
+        "delete": ["ADMIN", "EXAM_ADMIN"]
+    }
+}
