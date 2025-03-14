@@ -44,7 +44,7 @@ export class StorageController {
     @Get('download')
     async get(@Query('path') filePath: string, @Res() res) {
         try {
-            const file = await this.storageService.getFileByPath(`src/modules/storage/uploads/${filePath}`);
+            const file = await this.storageService.getFileByPath(`${filePath}`);
             file.getStream().pipe(res);   
         } catch (error) {
             if (error instanceof NotFoundException) {

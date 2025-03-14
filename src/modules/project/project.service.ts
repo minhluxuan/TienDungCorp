@@ -76,7 +76,12 @@ export class ProjectService {
     } 
 
     async searchById(id: UUID) {
-        return await this.projectRepository.findByPk(id);
+        return await this.projectRepository.findByPk(id, {
+            include: [
+                { model: File },
+                { model: User, attributes: ['id', 'username', 'firstName', 'lastName'] }
+            ]
+        });
     }
 
     async update(id: UUID, payload: UpdateProjectDto) {

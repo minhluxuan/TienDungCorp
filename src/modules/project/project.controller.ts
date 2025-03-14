@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, HttpStatus, NotFoundException, Param, Post, Put, Req, Res, UseGuards, UsePipes } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Delete, Get, HttpStatus, NotFoundException, Param, Post, Put, Req, Res, UseGuards, UsePipes } from "@nestjs/common";
 import { ProjectService } from "./project.service";
 import { CreateProjectDto } from "./dtos/create_project.dto";
 import { Response } from "../response/response.entity";
@@ -35,13 +35,32 @@ export class ProjectController {
         }
     }
 
-    @UseGuards(JwtAuthGuard)
     @UsePipes(ValidateInputPipe)
     @Post('search')
     async search(@Body() searchPayload: SearchPayload, @Res() res) {
         try {
             const projects = await this.projectService.search(searchPayload);
             this.response.initResponse(true, 'Search projects successfully', projects);
+            return res.status(HttpStatus.OK).json(this.response);
+        } catch (error) {
+            console.log(error);
+            if (error.name === 'SequelizeDatabaseError') {
+                console.log(error);
+                this.response.initResponse(false, 'Internal server error', null);
+                return res.status(HttpStatus.BAD_REQUEST).json(this.response);
+            }
+
+            this.response.initResponse(false, "An error occurs. Please try again", null);
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(this.response);
+        }
+    }
+
+    @UsePipes(ValidateInputPipe)
+    @Get('search/:id')
+    async searchById(@Param('id') id: UUID, @Res() res) {
+        try {
+            const project = await this.projectService.searchById(id);
+            this.response.initResponse(true, 'Search project successfully', project);
             return res.status(HttpStatus.OK).json(this.response);
         } catch (error) {
             console.log(error);
