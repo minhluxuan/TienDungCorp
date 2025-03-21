@@ -171,6 +171,38 @@ class Project {
             return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
         }
     }
+    static async updateContent(id, payload, accessToken) {
+        try {
+            const response = await axios_1.default.put(`${this.baseUrl}/content/update/${id}`, payload, {
+                withCredentials: true,
+                validateStatus: status => status >= 200 && status <= 500,
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            });
+            if (!response) {
+                const responseData = {
+                    success: false,
+                    message: 'An error occurs. Please try again.',
+                    data: null,
+                    status: http_status_codes_1.StatusCodes.BAD_GATEWAY
+                };
+                return responseData;
+            }
+            const data = response.data;
+            const responseData = {
+                success: data.success,
+                message: data.message,
+                data: data.data,
+                status: response.status
+            };
+            return responseData;
+        }
+        catch (error) {
+            console.error("Request that caused the error: ", error?.request);
+            return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+        }
+    }
     static async update(id, payload, accessToken) {
         try {
             const response = await axios_1.default.put(`${this.baseUrl}/update/${id}`, payload, {

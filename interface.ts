@@ -139,6 +139,12 @@ export interface ResponseDataUploadingFileInterface {
     createdAt: Date
 }
 
+export interface UpdateProjectInterface {
+    title: string;
+    name: string;
+    type: NewsType;
+}
+
 export interface UpdateProjectContentInterface {
     content: string;
 }

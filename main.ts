@@ -1,4 +1,4 @@
-import { CreateProjectInterface, LoginPayloadInterface, ResponseData, ResponseDataCreatingProjectInterface, ResponseDataGettingUserInfoInterface, ResponseDataLoggingInInterface, ResponseDataSearchingProjectInterface, ResponseDataUpdatingProjectInterface, ResponseDataUploadingFileInterface, SearchPayload, UpdateProjectContentInterface, UploadFileInterface } from "./interface";
+import { CreateProjectInterface, LoginPayloadInterface, ResponseData, ResponseDataCreatingProjectInterface, ResponseDataGettingUserInfoInterface, ResponseDataLoggingInInterface, ResponseDataSearchingProjectInterface, ResponseDataUpdatingProjectInterface, ResponseDataUploadingFileInterface, SearchPayload, UpdateProjectContentInterface, UpdateProjectInterface, UploadFileInterface } from "./interface";
 import axios from "axios";
 import { StatusCodes as HttpStatusCode } from "http-status-codes";
 
@@ -194,7 +194,44 @@ export class Project {
         }
     }
 
-    static async update(id: string, payload: UpdateProjectContentInterface, accessToken: string) {
+    static async updateContent(id: string, payload: UpdateProjectContentInterface, accessToken: string) {
+        try {
+            const response = await axios.put(`${this.baseUrl}/content/update/${id}`, payload, {
+                withCredentials: true,
+                validateStatus: status => status >= 200 && status <= 500,
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            });
+
+            if (!response) {
+                const responseData: ResponseData<any> = {
+                    success: false,
+                    message: 'An error occurs. Please try again.',
+                    data: null,
+                    status: HttpStatusCode.BAD_GATEWAY
+                }
+
+                return responseData;
+            }
+
+            const data: any = response.data;
+
+            const responseData: ResponseData<ResponseDataUpdatingProjectInterface> = {
+                success: data.success,
+                message: data.message,
+                data: data.data,
+                status: response.status
+            }
+
+            return responseData;
+        } catch (error) {
+            console.error("Request that caused the error: ", error?.request);
+            return { success: error?.response?.data, request: error?.request, status: error.response ? error.response.status : null };
+        }
+    }
+
+    static async update(id: string, payload: UpdateProjectInterface, accessToken: string) {
         try {
             const response = await axios.put(`${this.baseUrl}/update/${id}`, payload, {
                 withCredentials: true,
